@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details | Universal Stationery</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-dark: #1e1e24;
+            --sober-yellow: #c2c603;
+            --light-bg: #f8f9fa;
+        }
+        body { background-color: var(--light-bg); font-family: 'Inter', sans-serif; color: var(--primary-dark); padding-top: 100px; }
+        .navbar { background: #151518 !important; padding: 15px 0; position: fixed; top: 0; width: 100%; z-index: 1050; border-bottom: 2px solid var(--sober-yellow); }
+        .navbar-brand { letter-spacing: 1.5px; color: white !important; }
+        .navbar-brand span { color: var(--sober-yellow) !important; }
+        .nav-link { color: #ffffff !important; }
+        
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -8px;
+            background-color: var(--sober-yellow);
+            color: black;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 5px;
+            border-radius: 50%;
+        }
+
+        .search-container { position: relative; width: 220px; margin: 0 10px; }
+        .search-input { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 6px 15px 6px 35px; width: 100%; color: white; font-size: 0.9rem; }
+        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #ccc; }
+
+        .details-card { background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .product-img { max-height: 400px; object-fit: contain; }
+        .price { font-size: 2.5rem; color: var(--sober-yellow); font-weight: bold; }
+        .main-footer { background: #151518; padding: 60px 0 30px; color: white; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <button class="btn border-0 text-white" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideMenu">
+                <i class="bi bi-list fs-3"></i>
+            </button>
+            <a class="navbar-brand fw-bold ms-2" href="index.html">UNIVERSAL<span>STATIONERY</span></a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav mx-auto" id="navbar-categories"></ul>
+                <div class="search-container d-none d-lg-block">
+                    <i class="bi bi-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search products...">
+                </div>
+            </div>
+            <div class="ms-auto d-flex gap-3 align-items-center">
+                <div class="position-relative">
+                    <i class="bi bi-bag-check text-white fs-5"></i>
+                    <span id="cart-count" class="cart-badge">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="offcanvas offcanvas-start bg-dark text-white" id="sideMenu">
+        <div class="offcanvas-header bg-warning text-dark">
+            <h5 class="offcanvas-title fw-bold">COLLECTIONS</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body"><div id="sidebar-categories"></div></div>
+    </div>
+
+    <div class="container mt-4">
+        <a href="index.html" class="btn btn-link text-dark mb-4 text-decoration-none p-0">
+            <i class="bi bi-arrow-left"></i> Back to Shop
+        </a>
+        <div id="product-content" class="details-card p-4 p-md-5"></div>
+        <div class="mt-5">
+            <h3 class="fw-bold mb-4">Recommended for You</h3>
+            <div id="related-products" class="row g-4"></div>
+        </div>
+    </div>
+
+    <footer class="main-footer text-center mt-5">
+        <div class="container">
+            <h4 class="fw-bold text-warning mb-4">UNIVERSAL STATIONERY</h4>
+            <div id="footer-categories" class="mb-4"></div>
+            <p class="text-secondary small">© 2026 UNIVERSAL STATIONERY</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let cartCount = 0;
+        function addToCart() {
+            cartCount++;
+            document.getElementById('cart-count').innerText = cartCount;
+        }
+
+     const products = [
+    { id: "art-01", name: "Art Fine Liner 0.5mm", category: "art", catName: "Art & Craft", price: "Rs. 450", image: "photos/art1.jpg", desc: "Professional grade fine liner for precision drawing.lorem was amezing and creat a good thing ", icon: "bi-palette" },
+    { id: "art-02", name: "Acrylic Paint Set", category: "art", catName: "Art & Craft", price: "Rs. 1,800", image: "photos/art2.jpg", desc: "12 vibrant, high-pigment acrylic colors.", icon: "bi-palette" },
+    { id: "art-03", name: "Paint Brush Set", category: "art", catName: "Art & Craft", price: "Rs. 950", image: "photos/art4.jpg", icon: "bi-palette" },
+    { id: "art-04", name: "Canvas Board 12x12", category: "art", catName: "Art & Craft", price: "Rs. 350", image: "photos/jou2.webp", icon: "bi-palette" },
+    { id: "jr-01", name: "Premium Sketchbook A4", category: "journal", catName: "Journaling", price: "Rs. 1,200", image: "photos/jou1.webp", desc: "Acid-free heavy paper sketchbook.", icon: "bi-journal-text" },
+    { id: "jr-02", name: "Pastel Washi Tape", category: "journal", catName: "Journaling", price: "Rs. 300", image: "photos/jou3.webp", icon: "bi-journal-text" },
+    { id: "jr-03", name: "Bullet Journal Dot Grid", category: "journal", catName: "Journaling", price: "Rs. 1,450", image: "photos/jou2.webp", desc: "Durable hardbound dot grid journal.", icon: "bi-journal-text" },
+    { id: "jr-04", name: "Glitter Pen Set", category: "journal", catName: "Journaling", price: "Rs. 600", image: "photos/jou1.webp", icon: "bi-journal-text" },
+    { id: "off-01", name: "Parker Vector Pen", category: "office", catName: "Office Supplies", price: "Rs. 2,500", image: "photos/off4.jpg", desc: "Classic Parker Vector rollerball pen.", icon: "bi-briefcase" },
+    { id: "off-02", name: "Desk Organizer", category: "office", catName: "Office Supplies", price: "Rs. 1,150", image: "photos/off1.jpg", desc: "Modern metal mesh organizer.", icon: "bi-briefcase" },
+    { id: "off-03", name: "Electric Stapler", category: "office", catName: "Office Supplies", price: "Rs. 3,200", image: "photos/off2.jpg", desc: "Heavy-duty automatic stapler.", icon: "bi-briefcase" },
+    { id: "off-04", name: "Whiteboard Markers", category: "office", catName: "Office Supplies", price: "Rs. 400", image: "photos/off3.jpg", desc: "Non-toxic dry erase markers.", icon: "bi-briefcase" },
+    { id: "cup-01", name: "Glass Coffee Mug", category: "cups", catName: "Coffee Cups", price: "Rs. 1,100", image: "photos/pen1.jpg", icon: "bi-cup-hot" },
+    { id: "cup-02", name: "Ceramic Matte Mug", category: "cups", catName: "Coffee Cups", price: "Rs. 850", image: "photos/pen1.jpg", icon: "bi-cup-hot" },
+    { id: "cup-03", name: "Travel Thermos 750ml", category: "cups", catName: "Coffee Cups", price: "Rs. 2,800", image: "photos/pen2.jpg", icon: "bi-cup-hot" },
+    { id: "cup-04", name: "Wooden Coaster Set", category: "cups", catName: "Coffee Cups", price: "Rs. 550", image: "photos/pen3.jpg", desc: "Natural wood protective coasters.", icon: "bi-cup-hot" }
+];
+        function setupNavigation() {
+            const catIDs = [...new Set(products.map(p => p.category))];
+            let nHTML = '', sHTML = '', fHTML = '';
+            catIDs.forEach(id => {
+                const info = products.find(p => p.category === id);
+                nHTML += `<li class="nav-item"><a class="nav-link px-3" href="index.html#${id}">${info.catName}</a></li>`;
+                sHTML += `<a class="nav-link py-3 text-white d-block text-decoration-none border-bottom border-secondary" href="index.html#${id}"><i class="bi ${info.icon} me-2 text-warning"></i> ${info.catName}</a>`;
+                fHTML += `<a href="index.html#${id}" class="text-decoration-none text-secondary mx-2 small">${info.catName}</a>`;
+            });
+            document.getElementById('navbar-categories').innerHTML = nHTML;
+            document.getElementById('sidebar-categories').innerHTML = sHTML;
+            document.getElementById('footer-categories').innerHTML = fHTML;
+        }
+
+        // Updated Product Details and Buy Button Logic
+        const params = new URLSearchParams(window.location.search);
+        const currentId = params.get('id');
+        const item = products.find(p => p.id === currentId);
+
+        if (item) {
+            document.getElementById('product-content').innerHTML = `
+                <div class="row align-items-center">
+                    <div class="col-md-5 text-center"><img src="${item.image}" class="product-img img-fluid rounded"></div>
+                    <div class="col-md-7">
+                        <h1 class="fw-bold">${item.name}</h1>
+                        <p class="price">${item.price}</p>
+                        <p class="text-muted mb-4">${item.desc || 'Premium quality stationery item.'}</p>
+                        
+                        <button class="btn btn-warning w-100 py-3 fw-bold mb-3" onclick="addToCart()">ADD TO CART</button>
+                        
+                        <button class="btn btn-outline-dark w-100 py-3 fw-bold" onclick="location.href='checkout.html?id=${item.id}'">
+                            BUY IT NOW
+                        </button>
+                    </div>
+                </div>`;
+            
+            const related = products.filter(p => p.id !== currentId).sort(() => 0.5 - Math.random()).slice(0, 4);
+            document.getElementById('related-products').innerHTML = related.map(p => `
+                <div class="col-6 col-md-3">
+                    <div class="card h-100 shadow-sm border-0" onclick="location.href='product-details.html?id=${p.id}'" style="cursor:pointer">
+                        <div class="p-3"><img src="${p.image}" class="img-fluid rounded"></div>
+                        <div class="card-body text-center">
+                            <h6 class="fw-bold small mb-1">${p.name}</h6>
+                            <p class="text-warning small mb-0">${p.price}</p>
+                        </div>
+                    </div>
+                </div>`).join('');
+        }
+        setupNavigation();
+    </script>
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Universal Stationery</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-dark: #000000;
+            --sober-yellow: #c2c603;
+            --light-bg: #ffffff;
+        }
+        body { background-color: var(--light-bg); font-family: 'Inter', sans-serif; color: var(--primary-dark); padding-top: 100px; }
+        
+        /* Navbar Styling (Same as Index) */
+        .navbar { background: #151518 !important; padding: 12px 0; position: fixed; top: 0; width: 100%; z-index: 1050; border-bottom: 2px solid var(--sober-yellow); }
+        .navbar-brand { letter-spacing: 1.5px; color: white !important; }
+        .navbar-brand span { color: var(--sober-yellow) !important; }
+        .nav-link { color: white !important; }
+        
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -8px;
+            background-color: var(--sober-yellow);
+            color: black;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 5px;
+            border-radius: 50%;
+        }
+
+        .offcanvas { background-color: var(--primary-dark); color: white; border-right: 3px solid var(--sober-yellow); }
+        .checkout-container { background: white; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 30px; margin-bottom: 50px; }
+        .summary-box { background: #f9f9f9; border-radius: 10px; padding: 20px; border: 1px solid #eee; }
+        
+        /* Footer Styling (Same as Index) */
+        .main-footer { background: #151518; padding: 60px 0 30px; color: white; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <button class="btn border-0 text-white" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideMenu">
+                <i class="bi bi-list fs-3"></i>
+            </button>
+            <a class="navbar-brand fw-bold ms-2" href="index.html">UNIVERSAL<span style="color: #c2c603;">STATIONERY</span></a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav mx-auto" id="navbar-categories"></ul>
+            </div>
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <div class="position-relative">
+                    <i class="bi bi-bag-check fs-5 text-white"></i>
+                    <span id="cart-count" class="cart-badge">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="offcanvas offcanvas-start" id="sideMenu">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title fw-bold text-white">COLLECTIONS</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body"><div id="sidebar-categories"></div></div>
+    </div>
+
+    <div class="container mt-4">
+        <h2 class="fw-bold mb-4" style="border-left: 5px solid var(--sober-yellow); padding-left: 15px;">Secure Checkout</h2>
+        
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="checkout-container">
+                    <h5 class="fw-bold mb-3">Shipping Information</h5>
+                    <form id="checkoutForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">First Name</label>
+                                <input type="text" class="form-control rounded-pill" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Last Name</label>
+                                <input type="text" class="form-control rounded-pill" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-bold">Address</label>
+                                <input type="text" class="form-control rounded-pill" placeholder="Street address, City" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Phone Number</label>
+                                <input type="tel" class="form-control rounded-pill" placeholder="03xx-xxxxxxx" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Email</label>
+                                <input type="email" class="form-control rounded-pill" required>
+                            </div>
+                        </div>
+                        <h5 class="fw-bold mt-4 mb-3">Payment Method</h5>
+                        <div class="form-check p-3 border rounded-pill mb-3">
+                            <input class="form-check-input ms-2" type="radio" name="pay" id="cod" checked>
+                            <label class="form-check-label ms-2" for="cod">Cash on Delivery (COD)</label>
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100 py-3 rounded-pill fw-bold mt-3">PLACE ORDER</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="summary-box">
+                    <h5 class="fw-bold mb-4">Order Summary</h5>
+                    <div id="order-item" class="d-flex gap-3 mb-3 pb-3 border-bottom">
+                        </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal</span>
+                        <span id="subtotal" class="fw-bold">Rs. 0</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Delivery Charges</span>
+                        <span class="text-success fw-bold">FREE</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <h5 class="fw-bold">Total</h5>
+                        <h5 class="fw-bold text-warning" id="total-price">Rs. 0</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="row g-4 text-center text-md-start">
+                <div class="col-md-4">
+                    <h4 class="fw-bold text-warning mb-3"> UNIVERSAL STATIONERY </h4>
+                    <p class="text-secondary small">Experience the art of writing with our premium collection.</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h5 class="text-white fw-bold mb-3">Quick Collections</h5>
+                    <div id="footer-categories" class="d-flex flex-column gap-2 small"></div>
+                </div>
+                <div class="col-md-4 text-center text-md-end">
+                    <h5 class="text-white fw-bold mb-3">Stay Connected</h5>
+                    <p class="text-secondary small mb-1">Email: info@stationeryhub.com</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const products = [
+            { id: "art-01", name: "Art Fine Liner 0.5mm", category: "art", catName: "Art & Craft", price: "Rs. 450", image: "https://i.pinimg.com/1200x/b3/d4/3b/b3d43ba17ce6923920216e723a93ddf6.jpg" },
+            { id: "art-02", name: "Acrylic Paint Set", category: "art", catName: "Art & Craft", price: "Rs. 1,800", image: "https://i.pinimg.com/736x/35/49/76/3549765f7544adba340e95be913e2679.jpg" },
+            { id: "art-03", name: "Paint Brush Set", category: "art", catName: "Art & Craft", price: "Rs. 950", image: "https://i.pinimg.com/736x/f8/28/2c/f8282c5e557b16c95674aac6f5004e03.jpg" },
+            { id: "art-04", name: "Canvas Board 12x12", category: "art", catName: "Art & Craft", price: "Rs. 350", image: "https://i.pinimg.com/736x/57/57/05/575705d8bf478bf1e90bad20f0f11374.jpg" },
+            { id: "jr-01", name: "Premium Sketchbook A4", category: "journal", catName: "Journaling", price: "Rs. 1,200", image: "https://admin.pixelsultra.com/storage/uploads/pixels-bullet-journal-purple-ghibli-1750864464.webp" },
+            { id: "jr-02", name: "Pastel Washi Tape", category: "journal", catName: "Journaling", price: "Rs. 300", image: "https://admin.pixelsultra.com/storage/uploads/pixels-premium-scrapbook-let-the-adventure-begin-1750863748.webp" },
+            { id: "jr-03", name: "Bullet Journal Dot Grid", category: "journal", catName: "Journaling", price: "Rs. 1,450", image: "https://admin.pixelsultra.com/storage/uploads/pixels-bullet-journal-blue-mosque-1750865728.webp" },
+            { id: "jr-04", name: "Glitter Pen Set", category: "journal", catName: "Journaling", price: "Rs. 600", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIBOWmwTNO6RWpw9056tcJpClF6I2QQt4ipw&s" },
+            { id: "off-01", name: "Parker Vector Pen", category: "office", catName: "Office Supplies", price: "Rs. 2,500", image: "https://i.pinimg.com/736x/7f/86/db/7f86dbbe4ac93c6b5246a1ccc7fa004a.jpg" },
+            { id: "off-02", name: "Desk Organizer", category: "office", catName: "Office Supplies", price: "Rs. 1,150", image: "https://i.pinimg.com/1200x/23/69/2f/23692f6f03a60fecaf4bbb30f22304bc.jpg" },
+            { id: "off-03", name: "Electric Stapler", category: "office", catName: "Office Supplies", price: "Rs. 3,200", image: "https://i.pinimg.com/736x/07/d0/ce/07d0ce2ef62f41f61123f95ab92aa269.jpg" },
+            { id: "off-04", name: "Whiteboard Markers", category: "office", catName: "Office Supplies", price: "Rs. 400", image: "https://i.pinimg.com/736x/d8/95/85/d895852b328fc1a141e8fa215644dfa9.jpg" },
+            { id: "cup-01", name: "Glass Coffee Mug", category: "cups", catName: "Coffee Cups", price: "Rs. 1,100", image: "https://i.pinimg.com/1200x/ed/59/d5/ed59d58894256dba83bf6dbb65609042.jpg" },
+            { id: "cup-02", name: "Ceramic Matte Mug", category: "cups", catName: "Coffee Cups", price: "Rs. 850", image: "https://i.pinimg.com/1200x/03/57/ff/0357ffad67f8d1ccf33827ab014ba903.jpg" },
+            { id: "cup-03", name: "Travel Thermos 750ml", category: "cups", catName: "Coffee Cups", price: "Rs. 2,800", image: "https://i.pinimg.com/1200x/82/c3/d1/82c3d18bf6c441fb678dc788dd32cb92.jpg" },
+            { id: "cup-04", name: "Wooden Coaster Set", category: "cups", catName: "Coffee Cups", price: "Rs. 550", image: "https://i.pinimg.com/736x/08/d6/31/08d6315d31a245cc6fc135397c1f8e49.jpg" }
+        ];
+
+        // Navigation Setup
+        function setupNav() {
+            const catIDs = [...new Set(products.map(p => p.category))];
+            let nHTML = '', sHTML = '', fHTML = '';
+            catIDs.forEach(id => {
+                const info = products.find(p => p.category === id);
+                nHTML += `<li class="nav-item"><a class="nav-link px-3" href="index.html#${id}">${info.catName}</a></li>`;
+                sHTML += `<a class="nav-link py-3 text-white d-block text-decoration-none border-bottom border-secondary" href="index.html#${id}"><i class="bi bi-tag me-2 text-warning"></i> ${info.catName}</a>`;
+                fHTML += `<a href="index.html#${id}" class="text-decoration-none text-secondary mb-1 small">${info.catName}</a>`;
+            });
+            document.getElementById('navbar-categories').innerHTML = nHTML;
+            document.getElementById('sidebar-categories').innerHTML = sHTML;
+            document.getElementById('footer-categories').innerHTML = fHTML;
+        }
+
+        // Checkout Logic
+        const params = new URLSearchParams(window.location.search);
+        const productId = params.get('id');
+        const item = products.find(p => p.id === productId);
+
+        if (item) {
+            document.getElementById('order-item').innerHTML = `
+                <img src="${item.image}" width="80" class="rounded">
+                <div>
+                    <h6 class="fw-bold mb-0">${item.name}</h6>
+                    <small class="text-muted">Qty: 1</small>
+                    <p class="mb-0 text-warning fw-bold">${item.price}</p>
+                </div>`;
+            document.getElementById('subtotal').innerText = item.price;
+            document.getElementById('total-price').innerText = item.price;
+        }
+
+        document.getElementById('checkoutForm').onsubmit = (e) => {
+            e.preventDefault();
+            alert('Thank you! Your order for ' + (item ? item.name : 'items') + ' has been placed successfully.');
+            window.location.href = 'index.html';
+        };
+
+        setupNav();
+    </script>
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Universal Stationery | Premium Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-dark: #000000;
+            --sober-yellow: #c2c603;
+            --light-bg: #ffffff;
+        }
+        body { background-color: var(--light-bg); font-family: 'Inter', sans-serif; color: var(--primary-dark); overflow-x: hidden; }
+        .navbar { background: rgba(255, 255, 255, 0.15) !important; backdrop-filter: blur(8px); padding: 12px 0; position: fixed; top: 0; width: 100%; z-index: 1050; transition: 0.3s; }
+        .navbar.scrolled { background: #151518!important; border-bottom: 2px solid var(--sober-yellow); }
+        .navbar-brand { letter-spacing: 1.5px; color: #000000 !important; }
+        
+        /* Navbar Links ko Black karne ke liye update */
+        .navbar .nav-link { color: #000000 !important; font-weight: 500; }
+        
+        .navbar.scrolled .navbar-brand, .navbar.scrolled .nav-link, .navbar.scrolled .bi { color: white !important; }
+        .navbar-brand span { color: var(--sober-yellow) !important; }
+        
+        .search-container { position: relative; width: 220px; margin: 0 10px; }
+        .search-input { background: rgba(0, 0, 0, 0.08); border: 1px solid rgba(0,0,0,0.1); border-radius: 20px; padding: 6px 15px 6px 35px; width: 100%; font-size: 0.9rem; transition: 0.3s; }
+        .navbar.scrolled .search-input { background: rgba(126, 191, 4, 0.1); border-color: rgba(255,255,255,0.2); color: white; }
+        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: gray; z-index: 5; }
+
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -8px;
+            background-color: var(--sober-yellow);
+            color: black;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 5px;
+            border-radius: 50%;
+        }
+
+        .offcanvas { background-color: var(--primary-dark); color: white; border-right: 3px solid var(--sober-yellow); }
+        .carousel-item { height: 100vh; background-color: #000000; }
+        .carousel-item img { opacity: 0.6; object-fit: cover; height: 100%; }
+        .product-card { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(50, 1, 1, 0.05); transition: 0.3s; cursor: pointer; height: 100%; }
+        .product-card:hover { transform: translateY(-8px); }
+        .category-title { margin-top: 60px; font-weight: 700; position: relative; display: inline-block; padding-bottom: 10px; }
+        .category-title::after { content: ''; position: absolute; bottom: 0; left: 25%; width: 50%; height: 3px; background: var(--sober-yellow); }
+        .main-footer { background: #151518; padding: 60px 0 30px; color: white; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <button class="btn border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideMenu">
+                <i class="bi bi-list fs-3"></i>
+            </button>
+            <a class="navbar-brand fw-bold ms-2" href="index.html">UNIVERSAL<span style="color: #6d0000;">STATIONERY</span></a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav mx-auto" id="navbar-categories"></ul>
+                <div class="search-container d-none d-lg-block">
+                    <i class="bi bi-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search products...">
+                </div>
+            </div>
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <div class="d-lg-none"><i class="bi bi-search fs-5"></i></div>
+                <div class="position-relative">
+                    <i class="bi bi-bag-check fs-5"></i>
+                    <span id="cart-count" class="cart-badge">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="offcanvas offcanvas-start" id="sideMenu">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title fw-bold text-white">COLLECTIONS</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body"><div id="sidebar-categories"></div></div>
+    </div>
+
+    <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="photos/banner1.avif" class="d-block w-100" alt="Premium handcrafted pens and journals showcase">
+                <div class="carousel-caption text-start mb-5" style="border-left: 5px solid var(--sober-yellow); padding-left: 30px;">
+                    <h1 class="display-2 fw-bold">The Art of Writing</h1>
+                    <p class="lead">Premium handcrafted pens and journals.</p>
+                    <a href="#products-section" class="btn btn-warning px-4 py-2 fw-bold">SHOP NOW</a>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="photos/banner2.avif" class="d-block w-100" alt="Creative art tools and crafting supplies banner">
+                <div class="carousel-caption text-start mb-5" style="border-left: 5px solid var(--sober-yellow); padding-left: 30px;">
+                    <h1 class="display-2 fw-bold"><span style="color: rgb(254, 246, 0);">Creative Crafting</span></h1>
+                    <p class="lead">Unleash your imagination with our art tools.</p>
+                    <a href="#products-section" class="btn btn-warning px-4 py-2 fw-bold">VIEW MORE</a>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+    </div>
+
+    <div class="container my-5" id="products-section">
+        <div id="product-container"></div>
+    </div>
+
+    <div class="container my-5 py-5" style="border-top: 1px solid #eee;">
+        <div class="row g-5">
+            <div class="col-lg-6">
+                <h3 class="fw-bold mb-4" style="border-left: 5px solid var(--sober-yellow); padding-left: 15px;">Get In Touch</h3>
+                <form action="#" class="p-4 shadow-sm rounded bg-white border">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Full Name</label>
+                        <input type="text" class="form-control rounded-pill" placeholder="Enter your name" required minlength="3">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Email Address</label>
+                        <input type="email" class="form-control rounded-pill" placeholder="name@example.com" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Password</label>
+                        <input type="password" class="form-control rounded-pill" placeholder="add password" required minlength="6">
+                    </div>
+                    <button type="submit" class="btn btn-warning w-100 rounded-pill fw-bold py-2">SEND MESSAGE</button>
+                </form>
+            </div>
+            <div class="col-lg-6">
+                <h3 class="fw-bold mb-4" style="border-left: 5px solid var(--sober-yellow); padding-left: 15px;">Our Location</h3>
+                <div class="rounded-4 overflow-hidden shadow-sm border" style="height: 350px;">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3619.9026292694425!2d67.02166607406573!3d24.86717497792487!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3eb33e6b1566c46f%3A0x65318f4eb62c7aa8!2sAptech%20Learning%20Garden%20Center!5e0!3m2!1sen!2sus!4v1771602620288!5m2!1sen!2sus" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" title="Universal Stationery Store Location"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="row g-4 text-center text-md-start">
+                <div class="col-md-4">
+                    <h4 class="fw-bold text-warning mb-3"> UNIVERSAL STATIONERY </h4>
+                    <p class="text-secondary small">Experience the art of writing with our premium collection.</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h5 class="text-white fw-bold mb-3">Quick Collections</h5>
+                    <div id="footer-categories" class="d-flex flex-column gap-2 small"></div>
+                </div>
+                <div class="col-md-4 text-center text-md-end">
+                    <h5 class="text-white fw-bold mb-3">Stay Connected</h5>
+                    <p class="text-secondary small mb-1">Email: info@stationeryhub.com</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        window.addEventListener('scroll', () => {
+            document.querySelector('.navbar').classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        let cartCount = 0;
+        function addToCart(event) {
+            event.stopPropagation(); 
+            cartCount++;
+            document.getElementById('cart-count').innerText = cartCount;
+        }
+
+        const products = [
+            { id: "art-01", name: "Art Fine Liner 0.5mm", category: "art", catName: "Art & Craft", price: "Rs. 450", image: "photos/art1.jpg" },
+            { id: "art-02", name: "Acrylic Paint Set", category: "art", catName: "Art & Craft", price: "Rs. 1,800", image: "photos/art2.jpg" },
+            { id: "art-03", name: "Paint Burshes", category: "art", catName: "Art & Craft", price: "Rs. 950", image: "photos/art3.jpg" },
+            { id: "art-04", name: "Paint Tool", category: "art", catName: "Art & Craft", price: "Rs. 350", image: "photos/art4.jpg" },
+            { id: "jr-01", name: "Premium Sketchbook A4", category: "journal", catName: "Journaling", price: "Rs. 1,200", image: "photos/jou2.webp" },
+            { id: "jr-02", name: "Historicale jurnal", category: "journal", catName: "Journaling", price: "Rs. 300", image: "photos/jou1.webp" },
+            { id: "jr-03", name: "Bullet Journal Dot Grid", category: "journal", catName: "Journaling", price: "Rs. 1,450", image: "photos/jou3.webp" },
+            { id: "jr-04", name: "World Journal", category: "journal", catName: "Journaling", price: "Rs. 600", image: "photos/jou1.webp" },
+            { id: "off-01", name: "Office suplier", category: "office", catName: "Office Supplies", price: "Rs. 2,500", image: "photos/off4.jpg" },
+            { id: "off-02", name: "Desk Organizer", category: "office", catName: "Office Supplies", price: "Rs. 1,150", image: "photos/off1.jpg" },
+            { id: "off-03", name: "Electric Stapler", category: "office", catName: "Office Supplies", price: "Rs. 3,200", image: "photos/off2.jpg" },
+            { id: "off-04", name: "Cliper", category: "office", catName: "Office Supplies", price: "Rs. 400", image: "photos/off3.jpg" },
+            { id: "cup-01", name: "Pen Lovers", category: "cups", catName: "Pens", price: "Rs. 1,100", image: "photos/pen1.jpg" },
+            { id: "cup-02", name: "Dreametic", category: "cups", catName: "Pens", price: "Rs. 850", image: "photos/pen2.jpg" },
+            { id: "cup-03", name: "Smart Pen", category: "cups", catName: "Pens", price: "Rs. 2,800", image: "photos/pen3.jpg" },
+            { id: "cup-04", name: "Lovely Writing", category: "cups", catName: "Pens", price: "Rs. 550", image: "photos/pen4.jpg" }
+        ];
+
+        function render() {
+            const catIDs = [...new Set(products.map(p => p.category))];
+            let pHTML = '', nHTML = '', sHTML = '', fHTML = '';
+
+            catIDs.forEach(id => {
+                const info = products.find(p => p.category === id);
+                nHTML += `<li class="nav-item"><a class="nav-link px-3" href="#${id}">${info.catName}</a></li>`;
+                
+                sHTML += `<a class="nav-link py-3 text-white d-block text-decoration-none border-bottom border-secondary" href="#${id}" onclick="closeMenu()"><i class="bi bi-tag me-2 text-warning"></i> ${info.catName}</a>`;
+                
+                fHTML += `<a href="#${id}" class="text-decoration-none text-secondary mb-1">${info.catName}</a>`;
+                
+                pHTML += `<div class="text-center mb-4"><h3 class="category-title" id="${id}">${info.catName}</h3></div><div class="row g-4 mb-5">` + 
+                    products.filter(p => p.category === id).map(item => `
+                    <div class="col-6 col-md-3">
+                        <div class="card product-card">
+                            <div class="p-3" onclick="location.href='product-details.html?id=${item.id}'"><img src="${item.image}" class="img-fluid rounded" alt="${item.name}"></div>
+                            <div class="card-body text-center">
+                                <h6 class="fw-bold small">${item.name}</h6>
+                                <p class="mb-2 text-warning fw-bold">${item.price}</p>
+                                <button class="btn btn-warning btn-sm w-100 mb-2 fw-bold" onclick="addToCart(event)">ADD TO CART</button>
+                                <button class="btn btn-outline-dark btn-sm w-100" onclick="location.href='product-details.html?id=${item.id}'">DETAILS</button>
+                            </div>
+                        </div>
+                    </div>`).join('') + `</div>`;
+            });
+            document.getElementById('product-container').innerHTML = pHTML;
+            document.getElementById('navbar-categories').innerHTML = nHTML;
+            document.getElementById('sidebar-categories').innerHTML = sHTML;
+            document.getElementById('footer-categories').innerHTML = fHTML;
+        }
+
+        function closeMenu() {
+            const menu = document.getElementById('sideMenu');
+            const bsOffcanvas = bootstrap.Offcanvas.getInstance(menu);
+            if (bsOffcanvas) bsOffcanvas.hide();
+        }
+
+        render();
+    </script>
+</body>
+</html>
