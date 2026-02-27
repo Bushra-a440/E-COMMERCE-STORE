@@ -8,32 +8,64 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
         :root {
-            --primary-dark: #1e1e24;
+            --primary-dark: #000000;
             --sober-yellow: #c2c603;
-            --light-bg: #f8f9fa;
+            --light-bg: #ffffff;
         }
-        body { background-color: var(--light-bg); font-family: 'Inter', sans-serif; color: var(--primary-dark); padding-top: 100px; }
-        .navbar { background: #151518 !important; padding: 15px 0; position: fixed; top: 0; width: 100%; z-index: 1050; border-bottom: 2px solid var(--sober-yellow); }
-        .navbar-brand { letter-spacing: 1.5px; color: white !important; }
+        html { scroll-behavior: smooth; }
+        [id] { scroll-margin-top: 90px; }
+        body { background-color: var(--light-bg); font-family: 'Inter', sans-serif; color: var(--primary-dark); overflow-x: hidden; padding-top: 80px; }
+
+        /* ===== NAVBAR (EXACT COPY FROM INDEX) ===== */
+        .navbar { background: rgba(255, 255, 255, 0.15) !important; backdrop-filter: blur(8px); padding: 12px 0; position: fixed; top: 0; width: 100%; z-index: 1050; transition: 0.3s; }
+        .navbar.scrolled { background: #151518!important; border-bottom: 2px solid var(--sober-yellow); }
+        .navbar-brand { letter-spacing: 1.5px; color: #000000 !important; }
+        .navbar .nav-link { color: #000000 !important; font-weight: 500; }
+        .navbar.scrolled .navbar-brand, .navbar.scrolled .nav-link, .navbar.scrolled .bi { color: white !important; }
         .navbar-brand span { color: var(--sober-yellow) !important; }
-        .nav-link { color: #ffffff !important; }
-        
+
+        /* ===== SEARCH SLIDE (EXACT COPY FROM INDEX) ===== */
+        .search-slide {
+            position: fixed; top: -100px; left: 0; width: 100%; height: 80px;
+            background: #ffffff; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 1100; transition: 0.4s ease; display: flex;
+            align-items: center; padding: 0 20px;
+        }
+        .search-slide.active { top: 0; }
+        .search-slide input {
+            border: none; border-bottom: 2px solid var(--sober-yellow);
+            width: 100%; max-width: 600px; margin: 0 auto;
+            font-size: 1.2rem; outline: none; padding: 5px 10px;
+        }
+        .search-close { cursor: pointer; font-size: 1.5rem; color: #000; }
+
+        /* ===== CART BADGE (EXACT COPY FROM INDEX) ===== */
         .cart-badge {
-            position: absolute;
-            top: -5px;
-            right: -8px;
-            background-color: var(--sober-yellow);
-            color: black;
-            font-size: 10px;
-            font-weight: bold;
-            padding: 2px 5px;
-            border-radius: 50%;
+            position: absolute; top: -5px; right: -8px;
+            background-color: var(--sober-yellow); color: black;
+            font-size: 10px; font-weight: bold; padding: 2px 5px; border-radius: 50%;
         }
 
-        .search-container { position: relative; width: 220px; margin: 0 10px; }
-        .search-input { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 6px 15px 6px 35px; width: 100%; color: white; font-size: 0.9rem; }
-        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #ccc; }
+        /* ===== SIDE CART (EXACT COPY FROM INDEX) ===== */
+        .side-cart-overlay {
+            position: fixed; top: 0; right: -100%; width: 400px; height: 100vh;
+            background: white; box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+            z-index: 2000; transition: 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            padding: 20px; display: flex; flex-direction: column;
+        }
+        .side-cart-overlay.active { right: 0; }
+        .cart-items-wrapper { flex-grow: 1; overflow-y: auto; margin-top: 20px; }
+        .cart-item-row { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .cart-item-row img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; }
+        .cart-item-info h6 { margin: 0; font-size: 0.9rem; font-weight: 700; }
+        .cart-item-info p { margin: 0; color: var(--sober-yellow); font-weight: bold; font-size: 0.85rem; }
+        .close-cart { cursor: pointer; font-size: 1.5rem; align-self: flex-end; }
+        .grand-total-box { border-top: 2px solid #000; padding-top: 15px; margin-top: 10px; }
 
+        /* ===== OFFCANVAS SIDEBAR (EXACT COPY FROM INDEX) ===== */
+        .offcanvas { background-color: var(--primary-dark); color: white; border-right: 3px solid var(--sober-yellow); }
+
+        /* ===== PRODUCT DETAIL STYLES ===== */
         .details-card { background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         .product-img { max-height: 400px; object-fit: contain; }
         .price { font-size: 2.5rem; color: var(--sober-yellow); font-weight: bold; }
@@ -41,36 +73,64 @@
     </style>
 </head>
 <body>
+
+    <!-- ===== SEARCH SLIDE (EXACT COPY FROM INDEX) ===== -->
+    <div id="searchSlide" class="search-slide">
+        <input type="text" placeholder="Type to search products...">
+        <i class="bi bi-x-lg search-close ms-3" onclick="toggleSearch()"></i>
+    </div>
+
+    <!-- ===== SIDE CART (EXACT COPY FROM INDEX) ===== -->
+    <div id="sideCart" class="side-cart-overlay">
+        <i class="bi bi-x-lg close-cart" onclick="closeSideCart()"></i>
+        <h4 class="fw-bold border-bottom pb-2">Your Cart</h4>
+        <div class="cart-items-wrapper" id="cart-items-list">
+            <p class="text-muted text-center mt-5">Your cart is empty</p>
+        </div>
+        <div class="grand-total-box">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold m-0">Grand Total:</h5>
+                <h5 class="fw-bold text-success m-0" id="grand-total-price">Rs. 0</h5>
+            </div>
+            <button class="btn btn-dark w-100 py-3 fw-bold rounded-pill" onclick="closeSideCart()">CONTINUE SHOPPING</button>
+        </div>
+    </div>
+
+    <!-- ===== NAVBAR (EXACT COPY FROM INDEX) ===== -->
     <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <button class="btn border-0 text-white" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideMenu">
+            <button class="btn border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideMenu">
                 <i class="bi bi-list fs-3"></i>
             </button>
-            <a class="navbar-brand fw-bold ms-2" href="index.html">UNIVERSAL<span>STATIONERY</span></a>
+            <a class="navbar-brand fw-bold ms-2" href="index.html">UNIVERSAL<span style="color: #6d0000;">STATIONERY</span></a>
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav mx-auto" id="navbar-categories"></ul>
-                <div class="search-container d-none d-lg-block">
-                    <i class="bi bi-search search-icon"></i>
-                    <input type="text" class="search-input" placeholder="Search products...">
+                <div class="ms-3 d-none d-lg-block">
+                    <button class="btn border-0 p-0" onclick="toggleSearch()"><i class="bi bi-search fs-5"></i></button>
                 </div>
             </div>
-            <div class="ms-auto d-flex gap-3 align-items-center">
-                <div class="position-relative">
-                    <i class="bi bi-bag-check text-white fs-5"></i>
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <div class="d-lg-none" onclick="toggleSearch()"><i class="bi bi-search fs-5"></i></div>
+                <div class="position-relative" style="cursor: pointer;" onclick="openSideCart()">
+                    <i class="bi bi-bag-check fs-5"></i>
                     <span id="cart-count" class="cart-badge">0</span>
                 </div>
             </div>
         </div>
     </nav>
 
-    <div class="offcanvas offcanvas-start bg-dark text-white" id="sideMenu">
-        <div class="offcanvas-header bg-warning text-dark">
-            <h5 class="offcanvas-title fw-bold">COLLECTIONS</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    <!-- ===== OFFCANVAS SIDEBAR (EXACT COPY FROM INDEX) ===== -->
+    <div class="offcanvas offcanvas-start" id="sideMenu">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title fw-bold text-white">MENU</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
         </div>
-        <div class="offcanvas-body"><div id="sidebar-categories"></div></div>
+        <div class="offcanvas-body">
+            <div id="sidebar-categories"></div>
+        </div>
     </div>
 
+    <!-- ===== PRODUCT DETAIL CONTENT ===== -->
     <div class="container mt-4">
         <a href="index.html" class="btn btn-link text-dark mb-4 text-decoration-none p-0">
             <i class="bi bi-arrow-left"></i> Back to Shop
@@ -82,6 +142,7 @@
         </div>
     </div>
 
+    <!-- ===== FOOTER ===== -->
     <footer class="main-footer text-center mt-5">
         <div class="container">
             <h4 class="fw-bold text-warning mb-4">UNIVERSAL STATIONERY</h4>
@@ -92,45 +153,115 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        let cartCount = 0;
-        function addToCart() {
-            cartCount++;
-            document.getElementById('cart-count').innerText = cartCount;
+        // ===== SCROLL NAVBAR (EXACT COPY FROM INDEX) =====
+        window.addEventListener('scroll', () => {
+            document.querySelector('.navbar').classList.toggle('scrolled', window.scrollY > 50);
+        });
+        // Force scrolled state on page load since we have content at top
+        document.querySelector('.navbar').classList.add('scrolled');
+
+        // ===== PRODUCTS DATA =====
+        const products = [
+            { id: "art-01", name: "Art Fine Liner 0.5mm", category: "art", catName: "Art & Craft", price: 450, image: "photos/art1.jpg", desc: "Professional grade fine liner for precision drawing. Lorem was amazing and creates a good thing." },
+            { id: "art-02", name: "Acrylic Paint Set", category: "art", catName: "Art & Craft", price: 1800, image: "photos/art2.jpg", desc: "12 vibrant, high-pigment acrylic colors." },
+            { id: "art-03", name: "Paint Brush Set", category: "art", catName: "Art & Craft", price: 950, image: "photos/art4.jpg", desc: "Premium quality paint brushes for all surfaces." },
+            { id: "art-04", name: "Canvas Board 12x12", category: "art", catName: "Art & Craft", price: 350, image: "photos/jou2.webp", desc: "High-quality canvas board for painting." },
+            { id: "jr-01", name: "Premium Sketchbook A4", category: "journal", catName: "Journaling", price: 1200, image: "photos/jou1.webp", desc: "Acid-free heavy paper sketchbook." },
+            { id: "jr-02", name: "Historicale Journal", category: "journal", catName: "Journaling", price: 300, image: "photos/jou3.webp", desc: "Beautiful historical style journal." },
+            { id: "jr-03", name: "Bullet Journal Dot Grid", category: "journal", catName: "Journaling", price: 1450, image: "photos/jou2.webp", desc: "Durable hardbound dot grid journal." },
+            { id: "jr-04", name: "World Journal", category: "journal", catName: "Journaling", price: 600, image: "photos/jou1.webp", desc: "Travel-themed world journal." },
+            { id: "off-01", name: "Office Supplier", category: "office", catName: "Office Supplies", price: 2500, image: "photos/off1.jpg", desc: "Complete office supply kit." },
+            { id: "off-02", name: "Desk Organizer", category: "office", catName: "Office Supplies", price: 1150, image: "photos/off2.jfif", desc: "Modern metal mesh organizer." },
+            { id: "off-03", name: "Electric Stapler", category: "office", catName: "Office Supplies", price: 3200, image: "photos/off3.webp", desc: "Heavy-duty automatic stapler." },
+            { id: "off-04", name: "Cliper", category: "office", catName: "Office Supplies", price: 400, image: "photos/off4.webp", desc: "Non-toxic dry erase markers." },
+            { id: "cup-01", name: "Pen Lovers", category: "cups", catName: "Pens", price: 1100, image: "photos/pen1.jpg", desc: "Premium pen for pen lovers." },
+            { id: "cup-02", name: "Dreametic", category: "cups", catName: "Pens", price: 850, image: "photos/pen2.jpg", desc: "Dreametic luxury writing pen." },
+            { id: "cup-03", name: "Smart Pen", category: "cups", catName: "Pens", price: 2800, image: "photos/pen3.jpg", desc: "Smart digital writing pen." },
+            { id: "cup-04", name: "Lovely Writing", category: "cups", catName: "Pens", price: 550, image: "photos/pen4.jpg", desc: "Natural wood protective coasters." }
+        ];
+
+        // ===== TOGGLE SEARCH (EXACT COPY FROM INDEX) =====
+        function toggleSearch() {
+            const slide = document.getElementById('searchSlide');
+            slide.classList.toggle('active');
+            if (slide.classList.contains('active')) {
+                slide.querySelector('input').focus();
+            }
         }
 
-     const products = [
-    { id: "art-01", name: "Art Fine Liner 0.5mm", category: "art", catName: "Art & Craft", price: "Rs. 450", image: "photos/art1.jpg", desc: "Professional grade fine liner for precision drawing.lorem was amezing and creat a good thing ", icon: "bi-palette" },
-    { id: "art-02", name: "Acrylic Paint Set", category: "art", catName: "Art & Craft", price: "Rs. 1,800", image: "photos/art2.jpg", desc: "12 vibrant, high-pigment acrylic colors.", icon: "bi-palette" },
-    { id: "art-03", name: "Paint Brush Set", category: "art", catName: "Art & Craft", price: "Rs. 950", image: "photos/art4.jpg", icon: "bi-palette" },
-    { id: "art-04", name: "Canvas Board 12x12", category: "art", catName: "Art & Craft", price: "Rs. 350", image: "photos/jou2.webp", icon: "bi-palette" },
-    { id: "jr-01", name: "Premium Sketchbook A4", category: "journal", catName: "Journaling", price: "Rs. 1,200", image: "photos/jou1.webp", desc: "Acid-free heavy paper sketchbook.", icon: "bi-journal-text" },
-    { id: "jr-02", name: "Pastel Washi Tape", category: "journal", catName: "Journaling", price: "Rs. 300", image: "photos/jou3.webp", icon: "bi-journal-text" },
-    { id: "jr-03", name: "Bullet Journal Dot Grid", category: "journal", catName: "Journaling", price: "Rs. 1,450", image: "photos/jou2.webp", desc: "Durable hardbound dot grid journal.", icon: "bi-journal-text" },
-    { id: "jr-04", name: "Glitter Pen Set", category: "journal", catName: "Journaling", price: "Rs. 600", image: "photos/jou1.webp", icon: "bi-journal-text" },
-    { id: "off-01", name: "Parker Vector Pen", category: "office", catName: "Office Supplies", price: "Rs. 2,500", image: "photos/off4.jpg", desc: "Classic Parker Vector rollerball pen.", icon: "bi-briefcase" },
-    { id: "off-02", name: "Desk Organizer", category: "office", catName: "Office Supplies", price: "Rs. 1,150", image: "photos/off1.jpg", desc: "Modern metal mesh organizer.", icon: "bi-briefcase" },
-    { id: "off-03", name: "Electric Stapler", category: "office", catName: "Office Supplies", price: "Rs. 3,200", image: "photos/off2.jpg", desc: "Heavy-duty automatic stapler.", icon: "bi-briefcase" },
-    { id: "off-04", name: "Whiteboard Markers", category: "office", catName: "Office Supplies", price: "Rs. 400", image: "photos/off3.jpg", desc: "Non-toxic dry erase markers.", icon: "bi-briefcase" },
-    { id: "cup-01", name: "Glass Coffee Mug", category: "cups", catName: "Coffee Cups", price: "Rs. 1,100", image: "photos/pen1.jpg", icon: "bi-cup-hot" },
-    { id: "cup-02", name: "Ceramic Matte Mug", category: "cups", catName: "Coffee Cups", price: "Rs. 850", image: "photos/pen1.jpg", icon: "bi-cup-hot" },
-    { id: "cup-03", name: "Travel Thermos 750ml", category: "cups", catName: "Coffee Cups", price: "Rs. 2,800", image: "photos/pen2.jpg", icon: "bi-cup-hot" },
-    { id: "cup-04", name: "Wooden Coaster Set", category: "cups", catName: "Coffee Cups", price: "Rs. 550", image: "photos/pen3.jpg", desc: "Natural wood protective coasters.", icon: "bi-cup-hot" }
-];
+        // ===== CART FUNCTIONS (EXACT COPY FROM INDEX) =====
+        let cart = [];
+
+        function addToCart(productId, event) {
+            if (event) event.stopPropagation();
+            const item = products.find(p => p.id === productId);
+            if (item) {
+                cart.push(item);
+                updateCartUI();
+                openSideCart();
+            }
+        }
+
+        function updateCartUI() {
+            const cartCountElement = document.getElementById('cart-count');
+            const cartListElement = document.getElementById('cart-items-list');
+            const totalElement = document.getElementById('grand-total-price');
+            cartCountElement.innerText = cart.length;
+            if (cart.length === 0) {
+                cartListElement.innerHTML = `<p class="text-muted text-center mt-5">Your cart is empty</p>`;
+                totalElement.innerText = `Rs. 0`;
+                return;
+            }
+            let total = 0;
+            let cartHTML = '';
+            cart.forEach((item) => {
+                total += item.price;
+                cartHTML += `<div class="cart-item-row"><img src="${item.image}" alt="${item.name}"><div class="cart-item-info"><h6>${item.name}</h6><p>Rs. ${item.price.toLocaleString()}</p></div></div>`;
+            });
+            cartListElement.innerHTML = cartHTML;
+            totalElement.innerText = `Rs. ${total.toLocaleString()}`;
+        }
+
+        function openSideCart() { document.getElementById('sideCart').classList.add('active'); }
+        function closeSideCart() { document.getElementById('sideCart').classList.remove('active'); }
+
+        // ===== NAVIGATION RENDER (EXACT COPY FROM INDEX) =====
         function setupNavigation() {
             const catIDs = [...new Set(products.map(p => p.category))];
             let nHTML = '', sHTML = '', fHTML = '';
+
+            nHTML += `<li class="nav-item"><a class="nav-link px-3" href="index.html">Home</a></li>`;
+            sHTML += `<a class="nav-link py-3 text-white d-block text-decoration-none border-bottom border-secondary" href="index.html" onclick="closeMenu()">Home</a>`;
+
             catIDs.forEach(id => {
                 const info = products.find(p => p.category === id);
                 nHTML += `<li class="nav-item"><a class="nav-link px-3" href="index.html#${id}">${info.catName}</a></li>`;
-                sHTML += `<a class="nav-link py-3 text-white d-block text-decoration-none border-bottom border-secondary" href="index.html#${id}"><i class="bi ${info.icon} me-2 text-warning"></i> ${info.catName}</a>`;
-                fHTML += `<a href="index.html#${id}" class="text-decoration-none text-secondary mx-2 small">${info.catName}</a>`;
+                sHTML += `<a class="nav-link py-3 text-white d-block text-decoration-none border-bottom border-secondary" href="index.html#${id}" onclick="closeMenu()">${info.catName}</a>`;
+                fHTML += `<a href="index.html#${id}" class="text-decoration-none text-secondary mb-1">${info.catName}</a>`;
             });
-            document.getElementById('navbar-categories').innerHTML = nHTML;
-            document.getElementById('sidebar-categories').innerHTML = sHTML;
+
+            const extraNav = `
+                <li class="nav-item"><a class="nav-link px-3" href="index.html#about-section">About Us</a></li>
+                <li class="nav-item"><a class="nav-link px-3" href="index.html#location-section">Location</a></li>
+                <li class="nav-item"><a class="nav-link px-3" href="index.html#contact-section">Contact Us</a></li>`;
+
+            const extraSide = `
+                <a class="nav-link py-3 text-white d-block text-decoration-none border-bottom border-secondary" href="index.html#about-section" onclick="closeMenu()">About Us</a>
+                <a class="nav-link py-3 text-white d-block text-decoration-none border-bottom border-secondary" href="index.html#location-section" onclick="closeMenu()">Location</a>
+                <a class="nav-link py-3 text-white d-block text-decoration-none border-bottom border-secondary" href="index.html#contact-section" onclick="closeMenu()">Contact Us</a>`;
+
+            document.getElementById('navbar-categories').innerHTML = nHTML + extraNav;
+            document.getElementById('sidebar-categories').innerHTML = sHTML + extraSide;
             document.getElementById('footer-categories').innerHTML = fHTML;
         }
 
-        // Updated Product Details and Buy Button Logic
+        function closeMenu() {
+            const menu = document.getElementById('sideMenu');
+            const bsOffcanvas = bootstrap.Offcanvas.getInstance(menu);
+            if (bsOffcanvas) bsOffcanvas.hide();
+        }
+
+        // ===== PRODUCT DETAIL LOGIC =====
         const params = new URLSearchParams(window.location.search);
         const currentId = params.get('id');
         const item = products.find(p => p.id === currentId);
@@ -141,17 +272,13 @@
                     <div class="col-md-5 text-center"><img src="${item.image}" class="product-img img-fluid rounded"></div>
                     <div class="col-md-7">
                         <h1 class="fw-bold">${item.name}</h1>
-                        <p class="price">${item.price}</p>
+                        <p class="price">Rs. ${item.price.toLocaleString()}</p>
                         <p class="text-muted mb-4">${item.desc || 'Premium quality stationery item.'}</p>
-                        
-                        <button class="btn btn-warning w-100 py-3 fw-bold mb-3" onclick="addToCart()">ADD TO CART</button>
-                        
-                        <button class="btn btn-outline-dark w-100 py-3 fw-bold" onclick="location.href='checkout.html?id=${item.id}'">
-                            BUY IT NOW
-                        </button>
+                        <button class="btn btn-warning w-100 py-3 fw-bold mb-3" onclick="addToCart('${item.id}')">ADD TO CART</button>
+                        <button class="btn btn-outline-dark w-100 py-3 fw-bold" onclick="location.href='checkout.html?id=${item.id}'">BUY IT NOW</button>
                     </div>
                 </div>`;
-            
+
             const related = products.filter(p => p.id !== currentId).sort(() => 0.5 - Math.random()).slice(0, 4);
             document.getElementById('related-products').innerHTML = related.map(p => `
                 <div class="col-6 col-md-3">
@@ -159,11 +286,12 @@
                         <div class="p-3"><img src="${p.image}" class="img-fluid rounded"></div>
                         <div class="card-body text-center">
                             <h6 class="fw-bold small mb-1">${p.name}</h6>
-                            <p class="text-warning small mb-0">${p.price}</p>
+                            <p class="text-warning small mb-0">Rs. ${p.price.toLocaleString()}</p>
                         </div>
                     </div>
                 </div>`).join('');
         }
+
         setupNavigation();
     </script>
 </body>
